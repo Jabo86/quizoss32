@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 24</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 24</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (691-720) con opzioni mescolate casualmente
+        const questions = [
+            {
+                question: "Cos’è la sclerosi multipla?",
+                options: ["Un’infiammazione della vescica", "Una malattia autoimmune del sistema nervoso", "Un accumulo di liquido nei polmoni"],
+                correct: "Una malattia autoimmune del sistema nervoso",
+                explanation: "La sclerosi multipla è una malattia autoimmune che colpisce il sistema nervoso centrale, causando demielinizzazione, con sintomi come debolezza e spasticità. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono assistere nella mobilità, monitorare i sintomi e segnalare cadute."
+            },
+            {
+                question: "Quale è un segno tipico della sclerosi multipla?",
+                options: ["Debolezza muscolare", "Poliuria", "Ittero"],
+                correct: "Debolezza muscolare",
+                explanation: "La debolezza muscolare, spesso asimmetrica, è un segno tipico della sclerosi multipla, accompagnata da spasticità. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare la deambulazione, utilizzare ausili e segnalare sintomi neurologici."
+            },
+            {
+                question: "Cos’è il morbo di Parkinson?",
+                options: ["Un’infiammazione del fegato", "Una malattia neurodegenerativa con tremori", "Un blocco renale"],
+                correct: "Una malattia neurodegenerativa con tremori",
+                explanation: "Il morbo di Parkinson è una malattia neurodegenerativa che causa perdita di neuroni dopaminergici, con sintomi come tremori e rigidità. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono assistere nella mobilità, garantire farmaci e segnalare cadute."
+            },
+            {
+                question: "Quale è un segno tipico del morbo di Parkinson?",
+                options: ["Tremore a riposo", "Oliguria", "Ittero"],
+                correct: "Tremore a riposo",
+                explanation: "Il tremore a riposo, spesso unilaterale, è un segno tipico del morbo di Parkinson, con bradicinesia. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare i movimenti, garantire levodopa e segnalare rigidità."
+            },
+            {
+                question: "Cos’è l’ictus cerebrale?",
+                options: ["Un’infiammazione della vescica", "Un’interruzione del flusso sanguigno cerebrale", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’interruzione del flusso sanguigno cerebrale",
+                explanation: "L’ictus cerebrale è un’interruzione del flusso sanguigno cerebrale, ischemico o emorragico, con sintomi come debolezza e afasia. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono segnalare immediatamente sintomi, monitorare i parametri vitali e garantire sicurezza."
+            },
+            {
+                question: "Quale è un segno tipico dell’ictus cerebrale?",
+                options: ["Paralisi facciale", "Poliuria", "Ittero"],
+                correct: "Paralisi facciale",
+                explanation: "La paralisi facciale, spesso asimmetrica, è un segno tipico dell’ictus cerebrale, con debolezza improvvisa. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare la mobilità, evitare cadute e segnalare sintomi acuti."
+            },
+            {
+                question: "Cos’è l’epilessia?",
+                options: ["Un’infiammazione del fegato", "Un disturbo con crisi convulsive", "Un blocco renale"],
+                correct: "Un disturbo con crisi convulsive",
+                explanation: "L’epilessia è un disturbo neurologico caratterizzato da crisi convulsive ricorrenti, con sintomi variabili come convulsioni o assenze. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono proteggere durante le crisi, garantire farmaci e segnalare episodi."
+            },
+            {
+                question: "Quale è un segno tipico dell’epilessia?",
+                options: ["Crisi convulsive", "Oliguria", "Ittero"],
+                correct: "Crisi convulsive",
+                explanation: "Le crisi convulsive, con perdita di controllo, sono un segno tipico dell’epilessia. L’oliguria e l’ittero non sono correlati. Gli OSS devono evitare traumi durante le crisi, monitorare la durata e segnalare crisi prolungate."
+            },
+            {
+                question: "Cos’è la meningite?",
+                options: ["Un’infiammazione della vescica", "Un’infiammazione delle meningi", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione delle meningi",
+                explanation: "La meningite è un’infiammazione delle meningi, spesso batterica o virale, con sintomi come febbre e rigidità nucale. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare la febbre, garantire l’isolamento e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della meningite?",
+                options: ["Rigidità nucale", "Poliuria", "Ittero"],
+                correct: "Rigidità nucale",
+                explanation: "La rigidità nucale, con febbre e cefalea, è un segno tipico della meningite. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare i sintomi neurologici, garantire antibiotici se prescritti e segnalare rash."
+            },
+            {
+                question: "Cos’è l’encefalite?",
+                options: ["Un’infiammazione del fegato", "Un’infiammazione del parenchima cerebrale", "Un blocco renale"],
+                correct: "Un’infiammazione del parenchima cerebrale",
+                explanation: "L’encefalite è un’infiammazione del parenchima cerebrale, spesso virale, con sintomi come confusione e convulsioni. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare lo stato mentale, garantire sicurezza e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico dell’encefalite?",
+                options: ["Confusione mentale", "Oliguria", "Ittero"],
+                correct: "Confusione mentale",
+                explanation: "La confusione mentale, con febbre, è un segno tipico dell’encefalite. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare il livello di coscienza, evitare traumi e segnalare convulsioni."
+            },
+            {
+                question: "Cos’è la miastenia gravis?",
+                options: ["Un’infiammazione della vescica", "Una malattia autoimmune neuromuscolare", "Un accumulo di liquido nei polmoni"],
+                correct: "Una malattia autoimmune neuromuscolare",
+                explanation: "La miastenia gravis è una malattia autoimmune che colpisce la giunzione neuromuscolare, con sintomi come debolezza muscolare e ptosi. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare la forza muscolare, garantire farmaci e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della miastenia gravis?",
+                options: ["Ptosi palpebrale", "Poliuria", "Ittero"],
+                correct: "Ptosi palpebrale",
+                explanation: "La ptosi palpebrale, con debolezza che peggiora con l’uso, è un segno tipico della miastenia gravis. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare la deglutizione, garantire il riposo e segnalare dispnea."
+            },
+            {
+                question: "Cos’è la sclerosi laterale amiotrofica (SLA)?",
+                options: ["Un’infiammazione del fegato", "Una malattia neurodegenerativa dei motoneuroni", "Un blocco renale"],
+                correct: "Una malattia neurodegenerativa dei motoneuroni",
+                explanation: "La SLA è una malattia neurodegenerativa che colpisce i motoneuroni, con sintomi come debolezza progressiva e spasticità. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono assistere nella mobilità, garantire ausili e segnalare sintomi respiratori."
+            },
+            {
+                question: "Quale è un segno tipico della sclerosi laterale amiotrofica?",
+                options: ["Debolezza muscolare progressiva", "Oliguria", "Ittero"],
+                correct: "Debolezza muscolare progressiva",
+                explanation: "La debolezza muscolare progressiva, con fascicolazioni, è un segno tipico della SLA. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare la mobilità, utilizzare ausili e segnalare difficoltà respiratorie."
+            },
+            {
+                question: "Cos’è la polineuropatia?",
+                options: ["Un’infiammazione della vescica", "Un danno ai nervi periferici", "Un accumulo di liquido nei polmoni"],
+                correct: "Un danno ai nervi periferici",
+                explanation: "La polineuropatia è un danno ai nervi periferici, spesso associata a diabete, con sintomi come parestesie e debolezza. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare la sensibilità, garantire sicurezza e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della polineuropatia?",
+                options: ["Parestesie distali", "Poliuria", "Ittero"],
+                correct: "Parestesie distali",
+                explanation: "Le parestesie distali, con formicolio alle estremità, sono un segno tipico della polineuropatia. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare la deambulazione, evitare traumi e segnalare debolezza."
+            },
+            {
+                question: "Cos’è la sindrome di Guillain-Barré?",
+                options: ["Un’infiammazione del fegato", "Una polineuropatia autoimmune acuta", "Un blocco renale"],
+                correct: "Una polineuropatia autoimmune acuta",
+                explanation: "La sindrome di Guillain-Barré è una polineuropatia autoimmune acuta, con sintomi come debolezza progressiva e paralisi. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare la respirazione, garantire sicurezza e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della sindrome di Guillain-Barré?",
+                options: ["Paralisi ascendente", "Oliguria", "Ittero"],
+                correct: "Paralisi ascendente",
+                explanation: "La paralisi ascendente, che inizia dagli arti inferiori, è un segno tipico della sindrome di Guillain-Barré. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare la mobilità, garantire ventilazione se necessario e segnalare sintomi."
+            },
+            {
+                question: "Cos’è la demenza?",
+                options: ["Un’infiammazione della vescica", "Un declino cognitivo progressivo", "Un accumulo di liquido nei polmoni"],
+                correct: "Un declino cognitivo progressivo",
+                explanation: "La demenza è un declino cognitivo progressivo, come nell’Alzheimer, con sintomi come perdita di memoria e disorientamento. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare il comportamento, garantire sicurezza e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della demenza?",
+                options: ["Perdita di memoria recente", "Poliuria", "Ittero"],
+                correct: "Perdita di memoria recente",
+                explanation: "La perdita di memoria recente, con difficoltà di orientamento, è un segno tipico della demenza. La poliuria e l’ittero non sono correlati. Gli OSS devono fornire supporto cognitivo, evitare stress e segnalare agitazione."
+            },
+            {
+                question: "Cos’è il morbo di Alzheimer?",
+                options: ["Un’infiammazione del fegato", "Una forma di demenza neurodegenerativa", "Un blocco renale"],
+                correct: "Una forma di demenza neurodegenerativa",
+                explanation: "Il morbo di Alzheimer è una forma di demenza neurodegenerativa, con sintomi come perdita di memoria e apatia. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare il comportamento, garantire routine e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico del morbo di Alzheimer?",
+                options: ["Difficoltà di linguaggio", "Oliguria", "Ittero"],
+                correct: "Difficoltà di linguaggio",
+                explanation: "Le difficoltà di linguaggio, come afasia, sono un segno tipico del morbo di Alzheimer, con perdita di memoria. L’oliguria e l’ittero non sono correlati. Gli OSS devono facilitare la comunicazione, monitorare il comportamento e segnalare confusione."
+            },
+            {
+                question: "Cos’è la neuropatia diabetica?",
+                options: ["Un’infiammazione della vescica", "Un danno nervoso da diabete", "Un accumulo di liquido nei polmoni"],
+                correct: "Un danno nervoso da diabete",
+                explanation: "La neuropatia diabetica è un danno nervoso causato dal diabete, con sintomi come parestesie e perdita di sensibilità. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare i piedi, garantire igiene e segnalare ulcere."
+            },
+            {
+                question: "Quale è un segno tipico della neuropatia diabetica?",
+                options: ["Perdita di sensibilità distale", "Poliuria", "Ittero"],
+                correct: "Perdita di sensibilità distale",
+                explanation: "La perdita di sensibilità distale, con formicolio, è un segno tipico della neuropatia diabetica. La poliuria e l’ittero non sono correlati. Gli OSS devono controllare la pelle, evitare traumi e segnalare infezioni."
+            },
+            {
+                question: "Cos’è la nevralgia del trigemino?",
+                options: ["Un’infiammazione del fegato", "Un dolore facciale parossistico", "Un blocco renale"],
+                correct: "Un dolore facciale parossistico",
+                explanation: "La nevralgia del trigemino è un dolore facciale parossistico, spesso unilaterale, dovuto a irritazione del nervo trigemino. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare il dolore, garantire farmaci e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della nevralgia del trigemino?",
+                options: ["Dolore lancinante facciale", "Oliguria", "Ittero"],
+                correct: "Dolore lancinante facciale",
+                explanation: "Il dolore lancinante facciale, scatenato da stimoli, è un segno tipico della nevralgia del trigemino. L’oliguria e l’ittero non sono correlati. Gli OSS devono evitare stimoli trigger, monitorare il dolore e segnalare crisi."
+            },
+            {
+                question: "Cos’è l’idrocefalo?",
+                options: ["Un’infiammazione della vescica", "Un accumulo di liquido cerebrospinale", "Un accumulo di liquido nei polmoni"],
+                correct: "Un accumulo di liquido cerebrospinale",
+                explanation: "L’idrocefalo è un accumulo di liquido cerebrospinale nei ventricoli cerebrali, con sintomi come cefalea e alterazioni cognitive. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare lo stato mentale, garantire sicurezza e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico dell’idrocefalo?",
+                options: ["Cefalea mattutina", "Poliuria", "Ittero"],
+                correct: "Cefalea mattutina",
+                explanation: "La cefalea mattutina, con vomito, è un segno tipico dell’idrocefalo, dovuto a ipertensione endocranica. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare i sintomi neurologici, evitare stress e segnalare confusione."
+            },
+            {
+                question: "Cos’è la paralisi cerebrale?",
+                options: ["Un’infiammazione del fegato", "Un disturbo motorio da danno cerebrale", "Un blocco renale"],
+                correct: "Un disturbo motorio da danno cerebrale",
+                explanation: "La paralisi cerebrale è un disturbo motorio causato da danno cerebrale perinatale, con sintomi come spasticità e difficoltà motorie. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono assistere nella mobilità, garantire ausili e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della paralisi cerebrale?",
+                options: ["Spasticità muscolare", "Oliguria", "Ittero"],
+                correct: "Spasticità muscolare",
+                explanation: "La spasticità muscolare, con rigidità, è un segno tipico della paralisi cerebrale. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare i movimenti, utilizzare ausili e segnalare convulsioni."
+            },
+            {
+                question: "Cos’è la distrofia muscolare di Duchenne?",
+                options: ["Un’infiammazione della vescica", "Una malattia genetica muscolare", "Un accumulo di liquido nei polmoni"],
+                correct: "Una malattia genetica muscolare",
+                explanation: "La distrofia muscolare di Duchenne è una malattia genetica che causa debolezza muscolare progressiva, con sintomi come difficoltà a camminare. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono assistere nella mobilità, garantire ausili e segnalare sintomi respiratori."
+            },
+            {
+                question: "Quale è un segno tipico della distrofia muscolare di Duchenne?",
+                options: ["Debolezza muscolare prossimale", "Poliuria", "Ittero"],
+                correct: "Debolezza muscolare prossimale",
+                explanation: "La debolezza muscolare prossimale, con cadute frequenti, è un segno tipico della distrofia muscolare di Duchenne. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare la deambulazione, utilizzare ausili e segnalare difficoltà respiratorie."
+            },
+            {
+                question: "Cos’è la corea di Huntington?",
+                options: ["Un’infiammazione del fegato", "Una malattia genetica neurodegenerativa", "Un blocco renale"],
+                correct: "Una malattia genetica neurodegenerativa",
+                explanation: "La corea di Huntington è una malattia genetica neurodegenerativa che causa movimenti involontari e declino cognitivo. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare i movimenti, garantire sicurezza e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della corea di Huntington?",
+                options: ["Movimenti coreici", "Oliguria", "Ittero"],
+                correct: "Movimenti coreici",
+                explanation: "I movimenti coreici, involontari e a scatti, sono un segno tipico della corea di Huntington. L’oliguria e l’ittero non sono correlati. Gli OSS devono evitare traumi, monitorare il comportamento e segnalare depressione."
+            },
+            {
+                question: "Cos’è la lesione del midollo spinale?",
+                options: ["Un’infiammazione della vescica", "Un danno al midollo spinale con paralisi", "Un accumulo di liquido nei polmoni"],
+                correct: "Un danno al midollo spinale con paralisi",
+                explanation: "La lesione del midollo spinale è un danno al midollo spinale, spesso traumatico, con sintomi come paralisi e perdita di sensibilità. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono assistere nella mobilità, prevenire piaghe e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della lesione del midollo spinale?",
+                options: ["Paralisi sotto la lesione", "Poliuria", "Ittero"],
+                correct: "Paralisi sotto la lesione",
+                explanation: "La paralisi sotto la lesione, con perdita di sensibilità, è un segno tipico della lesione del midollo spinale. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare la pelle, garantire cateterismi e segnalare infezioni."
+            },
+            {
+                question: "Cos’è la spina bifida?",
+                options: ["Un’infiammazione del fegato", "Un difetto congenito della colonna vertebrale", "Un blocco renale"],
+                correct: "Un difetto congenito della colonna vertebrale",
+                explanation: "La spina bifida è un difetto congenito della colonna vertebrale, con sintomi come paralisi e incontinenza. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono assistere nella mobilità, garantire cateterismi e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della spina bifida?",
+                options: ["Incontinenza urinaria", "Oliguria", "Ittero"],
+                correct: "Incontinenza urinaria",
+                explanation: "L’incontinenza urinaria, con debolezza degli arti, è un segno tipico della spina bifida. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare la vescica, utilizzare pannoloni e segnalare infezioni urinarie."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
